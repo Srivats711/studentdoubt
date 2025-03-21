@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Assistant</title>
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --background-color: #f9fafb;
+      --chat-bg: #ffffff;
+      --text-color: #1f2937;
+      --placeholder-color: #9ca3af;
+      --border-color: #e5e7eb;
+      --send-button-hover: #4338ca;
+      --user-message-bg: #e7f3ff;
+      --bot-message-bg: #f3f4f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 800px;
+      height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background-color: var(--chat-bg);
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header i {
+      font-size: 20px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.5;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: var(--user-message-bg);
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background-color: var(--bot-message-bg);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      padding: 16px;
+      border-top: 1px solid var(--border-color);
+      background-color: white;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .chat-input::placeholder {
+      color: var(--placeholder-color);
+    }
+
+    .send-button {
+      margin-left: 12px;
+      padding: 0 20px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-button:hover {
+      background-color: var(--send-button-hover);
+    }
+
+    @media (max-width: 600px) {
+      .chat-container {
+        width: 95%;
+        height: 90vh;
+      }
+      
+      .message {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <i class="fas fa-robot"></i>
+      <span>Student Assistant</span>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      {% if response %}
+        <div class="message user-message">
+          {{ user_input }}
+        </div>
+        <div class="message bot-message">
+          {{ response }}
+        </div>
+      {% else %}
+        <div class="message bot-message">
+          Hi there! I'm your student assistant. How can I help you today?
+        </div>
+      {% endif %}
+    </div>
+    <!-- Form that posts to /ask -->
+    <form class="chat-input-container" id="chat-form" method="POST" action="/ask">
+      <input type="text" class="chat-input" id="user-input" name="user_input" placeholder="Type your message here..." required>
+      <button type="submit" class="send-button">Send</button>
+    </form>
+  </div>
+
+  <!-- Font Awesome for icons -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</body>
+</html>

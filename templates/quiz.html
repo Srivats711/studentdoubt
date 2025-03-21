@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Quiz</title>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --success: #06d6a0;
+            --danger: #ef476f;
+            --warning: #ffd166;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 600;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .options li {
+            margin-bottom: 10px;
+        }
+        
+        .options label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .options label:hover {
+            background-color: #e9ecef;
+        }
+        
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a75e6;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #05b386;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d93862;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .section-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .dashboard-table th, .dashboard-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e4e8;
+        }
+        
+        .dashboard-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .dashboard-table tr:hover {
+            background-color: #f1f4f7;
+        }
+        
+        .student-info {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .student-info input, .student-info select {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .badges-section {
+            margin-top: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #e0f7fa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        .badge img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+        }
+
+        .badge h4 {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .badge p {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Academic Quiz</h1>
+            <p>Test your knowledge in Mathematics, Physics, and Chemistry</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="card">
+            <h2>Welcome to the Academic Quiz!</h2>
+            <p>This quiz contains questions from Mathematics, Physics, and Chemistry. You'll tackle each subject separately.</p>
+            
+            <div class="student-info">
+                <input type="text" id="student-name" placeholder="Your Name" required>
+                <select id="student-level">
+                    <option value="">Select Your Level</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+            
+            <button id="start-btn" class="btn btn-primary">Start Quiz</button>
+        </div>
+        
+        <!-- Quiz Section -->
+        <div id="quiz-container" class="hidden">
+            <div class="section-nav">
+                <div class="tab active" data-section="math">Mathematics</div>
+                <div class="tab" data-section="physics">Physics</div>
+                <div class="tab" data-section="chemistry">Chemistry</div>
+            </div>
+            
+            <!-- Math Section -->
+            <div id="math-section" class="quiz-section card">
+                <h2>Mathematics Questions</h2>
+                <div id="math-questions">
+                    <div class="question">
+                        <p><strong>1. What is 7 × 8?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="math-q1" value="54"> 54</label></li>
+                            <li><label><input type="radio" name="math-q1" value="56"> 56</label></li>
+                            <li><label><input type="radio" name="math-q1" value="64"> 64</label></li>
+                            <li><label><input type="radio" name="math-q1" value="58"> 58</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>2. Which of the following is a prime number?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="math-q2" value="15"> 15</label></li>
+                            <li><label><input type="radio" name="math-q2" value="21"> 21</label></li>
+                            <li><label><input type="radio" name="math-q2" value="27"> 27</label></li>
+                            <li><label><input type="radio" name="math-q2" value="29"> 29</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>3. What is the value of π (pi) rounded to two decimal places?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="math-q3" value="3.14"> 3.14</label></li>
+                            <li><label><input type="radio" name="math-q3" value="3.41"> 3.41</label></li>
+                            <li><label><input type="radio" name="math-q3" value="3.12"> 3.12</label></li>
+                            <li><label><input type="radio" name="math-q3" value="3.25"> 3.25</label></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button id="math-submit" class="btn btn-success">Submit & Continue</button>
+                </div>
+            </div>
+            
+            <!-- Physics Section -->
+            <div id="physics-section" class="quiz-section card hidden" aria-hidden="true">
+                <h2>Physics Questions</h2>
+                <div id="physics-questions">
+                    <div class="question">
+                        <p><strong>1. What is the SI unit of force?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="physics-q1" value="Watt"> Watt</label></li>
+                            <li><label><input type="radio" name="physics-q1" value="Joule"> Joule</label></li>
+                            <li><label><input type="radio" name="physics-q1" value="Newton"> Newton</label></li>
+                            <li><label><input type="radio" name="physics-q1" value="Pascal"> Pascal</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>2. Which of the following is a scalar quantity?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="physics-q2" value="Velocity"> Velocity</label></li>
+                            <li><label><input type="radio" name="physics-q2" value="Force"> Force</label></li>
+                            <li><label><input type="radio" name="physics-q2" value="Temperature"> Temperature</label></li>
+                            <li><label><input type="radio" name="physics-q2" value="Acceleration"> Acceleration</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>3. What is the speed of light in vacuum?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="physics-q3" value="3 × 10⁸ m/s"> 3 × 10⁸ m/s</label></li>
+                            <li><label><input type="radio" name="physics-q3" value="2 × 10⁸ m/s"> 2 × 10⁸ m/s</label></li>
+                            <li><label><input type="radio" name="physics-q3" value="3 × 10⁷ m/s"> 3 × 10⁷ m/s</label></li>
+                            <li><label><input type="radio" name="physics-q3" value="3 × 10⁹ m/s"> 3 × 10⁹ m/s</label></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button id="physics-submit" class="btn btn-success">Submit & Continue</button>
+                </div>
+            </div>
+            
+            <!-- Chemistry Section -->
+            <div id="chemistry-section" class="quiz-section card hidden" aria-hidden="true">
+                <h2>Chemistry Questions</h2>
+                <div id="chemistry-questions">
+                    <div class="question">
+                        <p><strong>1. What is the chemical symbol for gold?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="chemistry-q1" value="Go"> Go</label></li>
+                            <li><label><input type="radio" name="chemistry-q1" value="Gd"> Gd</label></li>
+                            <li><label><input type="radio" name="chemistry-q1" value="Au"> Au</label></li>
+                            <li><label><input type="radio" name="chemistry-q1" value="Ag"> Ag</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>2. Which of the following is a noble gas?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="chemistry-q2" value="Chlorine"> Chlorine</label></li>
+                            <li><label><input type="radio" name="chemistry-q2" value="Hydrogen"> Hydrogen</label></li>
+                            <li><label><input type="radio" name="chemistry-q2" value="Argon"> Argon</label></li>
+                            <li><label><input type="radio" name="chemistry-q2" value="Nitrogen"> Nitrogen</label></li>
+                        </ul>
+                    </div>
+                    <div class="question">
+                        <p><strong>3. What is the pH value of pure water at room temperature?</strong></p>
+                        <ul class="options">
+                            <li><label><input type="radio" name="chemistry-q3" value="5"> 5</label></li>
+                            <li><label><input type="radio" name="chemistry-q3" value="7"> 7</label></li>
+                            <li><label><input type="radio" name="chemistry-q3" value="9"> 9</label></li>
+                            <li><label><input type="radio" name="chemistry-q3" value="14"> 14</label></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="navigation">
+                    <button id="chemistry-submit" class="btn btn-success">Submit & Continue</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="hidden card" aria-hidden="true">
+            <h2>Student Performance Dashboard</h2>
+            
+            <h3>Rankings</h3>
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Level</th>
+                        <th>Math Score</th>
+                        <th>Physics Score</th>
+                        <th>Chemistry Score</th>
+                        <th>Total Score</th>
+                        <th>Performance (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="rankings-body">
+                    <!-- Dynamic content will be inserted here -->
+                </tbody>
+            </table>
+
+            <div class="badges-section">
+                <h3>Your Badges</h3>
+                <div id="badge-list">
+                    <!-- Badges will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <div class="streak-section">
+                <h3>Your Streak</h3>
+                <p>Current Streak: <span class="streak-count" id="streak-count">0 days</span></p>
+            </div>
+            
+            <button id="back-to-quiz" class="btn btn-primary" style="margin-top: 20px;">Back to Quiz</button>
+        </div>
+    </div>
+    
+    <script>
+        // Badge data structure
+        const badges = [
+            {
+                name: "Gold Badge",
+                description: "Awarded for scoring 90% or higher.",
+                imageUrl: "https://via.placeholder.com/50?text=Gold",
+                criteria: "Score >= 90%"
+            },
+            {
+                name: "Silver Badge",
+                description: "Awarded for scoring between 75% and 89%.",
+                imageUrl: "https://via.placeholder.com/50?text=Silver",
+                criteria: "Score >= 75% and < 90%"
+            },
+            {
+                name: "Bronze Badge",
+                description: "Awarded for scoring between 50% and 74%.",
+                imageUrl: "https://via.placeholder.com/50?text=Bronze",
+                criteria: "Score >= 50% and < 75%"
+            },
+            {
+                name: "Participation Badge",
+                description: "Congratulations on participating! Every attempt helps you learn and grow.",
+                imageUrl: "https://via.placeholder.com/50?text=Participation",
+                criteria: "Complete the quiz"
+            }
+        ];
+
+        // Basic functionality for the quiz 
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const startScreen = document.getElementById('start-screen');
+            const quizContainer = document.getElementById('quiz-container');
+            const dashboardSection = document.getElementById('dashboard');
+            const badgeList = document.getElementById('badge-list');
+            const streakCountDisplay = document.getElementById('streak-count');
+            
+            const mathSection = document.getElementById('math-section');
+            const physicsSection = document.getElementById('physics-section');
+            const chemistrySection = document.getElementById('chemistry-section');
+            
+            const tabs = document.querySelectorAll('.tab');
+            
+            // Correct answers
+            const correctAnswers = {
+                math: ['56', '29', '3.14'], // Correct answers for Math
+                physics: ['Newton', 'Temperature', '3 × 10⁸ m/s'], // Correct answers for Physics
+                chemistry: ['Au', 'Argon', '7'] // Correct answers for Chemistry
+            };
+            
+            let scores = {
+                math: 0,
+                physics: 0,
+                chemistry: 0
+            };
+
+            let userBadges = [];
+            let streakCount = 0;
+            let leaderboard = [];
+
+            // Event Listeners
+            document.getElementById('start-btn').addEventListener('click', function() {
+                const nameInput = document.getElementById('student-name');
+                const levelSelect = document.getElementById('student-level');
+                
+                if (!nameInput.value.trim()) {
+                    alert("Please enter your name");
+                    return;
+                }
+                
+                if (!levelSelect.value) {
+                    alert("Please select your level");
+                    return;
+                }
+                
+                startScreen.classList.add('hidden');
+                quizContainer.classList.remove('hidden');
+            });
+            
+            document.getElementById('math-submit').addEventListener('click', function() {
+                // Calculate Math score
+                scores.math = calculateScore('math');
+                mathSection.classList.add('hidden');
+                physicsSection.classList.remove('hidden');
+                
+                tabs.forEach(tab => tab.classList.remove('active'));
+                document.querySelector('.tab[data-section="physics"]').classList.add('active');
+            });
+            
+            document.getElementById('physics-submit').addEventListener('click', function() {
+                // Calculate Physics score
+                scores.physics = calculateScore('physics');
+                physicsSection.classList.add('hidden');
+                chemistrySection.classList.remove('hidden');
+                
+                tabs.forEach(tab => tab.classList.remove('active'));
+                document.querySelector('.tab[data-section="chemistry"]').classList.add('active');
+            });
+            
+            document.getElementById('chemistry-submit').addEventListener('click', function() {
+                // Calculate Chemistry score
+                scores.chemistry = calculateScore('chemistry');
+                quizContainer.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                
+                // Update leaderboard and badges
+                updateLeaderboard();
+                updateBadges();
+                updateStreak();
+            });
+            
+            document.getElementById('back-to-quiz').addEventListener('click', function() {
+                dashboardSection.classList.add('hidden');
+                startScreen.classList.remove('hidden');
+            });
+            
+            // Tab navigation
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    
+                    // Hide all sections
+                    mathSection.classList.add('hidden');
+                    physicsSection.classList.add('hidden');
+                    chemistrySection.classList.add('hidden');
+                    
+                    // Show selected section
+                    document.getElementById(section + '-section').classList.remove('hidden');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Function to calculate score
+            function calculateScore(subject) {
+                let score = 0;
+                const questions = document.querySelectorAll(`#${subject}-questions input[type="radio"]:checked`);
+                questions.forEach((question, index) => {
+                    if (question.value === correctAnswers[subject][index]) {
+                        score++;
+                    }
+                });
+                return score;
+            }
+
+            // Function to update leaderboard
+            function updateLeaderboard() {
+                const userId = document.getElementById('student-name').value;
+                const totalScore = scores.math + scores.physics + scores.chemistry;
+
+                leaderboard.push({ 
+                    userId, 
+                    level: document.getElementById('student-level').value, 
+                    mathScore: scores.math, 
+                    physicsScore: scores.physics, 
+                    chemistryScore: scores.chemistry, 
+                    totalScore: totalScore, 
+                    performance: (totalScore / 9) * 100 
+                });
+                leaderboard.sort((a, b) => b.totalScore - a.totalScore); // Sort by total score descending
+                leaderboard = leaderboard.slice(0, 10); // Keep top 10
+                renderLeaderboard();
+            }
+
+            // Function to render leaderboard
+            function renderLeaderboard() {
+                const leaderboardBody = document.getElementById('rankings-body');
+                leaderboardBody.innerHTML = leaderboard.map((user, index) => `
+                    <tr class="visible">
+                        <td>${index + 1}</td>
+                        <td>${user.userId}</td>
+                        <td>${user.level}</td>
+                        <td>${user.mathScore}</td>
+                        <td>${user.physicsScore}</td>
+                        <td>${user.chemistryScore}</td>
+                        <td>${user.totalScore}</td>
+                        <td>${user.performance.toFixed(2)}%</td>
+                    </tr>
+                `).join('');
+
+                // Add animation to each row
+                const rows = leaderboardBody.querySelectorAll('tr');
+                rows.forEach((row, index) => {
+                    setTimeout(() => {
+                        row.classList.add('visible');
+                    }, index * 100); // Stagger the animation
+                });
+            }
+
+            // Function to update badges based on scores
+            function updateBadges() {
+                const totalScore = scores.math + scores.physics + scores.chemistry;
+                const percentageScore = (totalScore / 9) * 100; // Total questions = 9
+
+                if (percentageScore >= 90) {
+                    userBadges.push(badges[0]); // Gold Badge
+                } else if (percentageScore >= 75) {
+                    userBadges.push(badges[1]); // Silver Badge
+                } else if (percentageScore >= 50) {
+                    userBadges.push(badges[2]); // Bronze Badge
+                } else {
+                    userBadges.push(badges[3]); // Participation Badge
+                }
+
+                renderBadges(userBadges);
+            }
+
+            // Function to render badges
+            function renderBadges(userBadges) {
+                badgeList.innerHTML = userBadges.map(badge => `
+                    <div class="badge">
+                        <img src="${badge.imageUrl}" alt="${badge.name}">
+                        <h4>${badge.name}</h4>
+                        <p>${badge.description}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Function to update streak
+            function updateStreak() {
+                const lastParticipation = localStorage.getItem('lastParticipation');
+                const today = new Date().toDateString();
+
+                if (lastParticipation === today) {
+                    console.log("Streak continues!");
+                } else {
+                    streakCount = parseInt(localStorage.getItem('streakCount')) || 0;
+                    streakCount++;
+                    localStorage.setItem('streakCount', streakCount);
+                    localStorage.setItem('lastParticipation', today);
+                    console.log(`Streak updated: ${streakCount} days`);
+                    
+                    // Update the streak count display
+                    streakCountDisplay.textContent = streakCount + " days";
+                }
+            }
+        });
+    </script>
+    
+</body>
+</html>
